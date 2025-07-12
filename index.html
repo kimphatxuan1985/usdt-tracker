@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Theo dõi giá USDT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f7f9fc;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .price-box {
+      background: white;
+      padding: 20px;
+      margin: 20px auto;
+      width: 300px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #16a085;
+    }
+  </style>
+</head>
+<body>
+  <h1>💹 Theo dõi giá USDT</h1>
+  <div class="price-box">
+    <p>Giá Binance: <span class="value" id="binancePrice">Đang tải...</span> VND</p>
+    <p>Giá OKX: <span class="value" id="okxPrice">Đang tải...</span> VND</p>
+    <p>Chênh lệch: <span class="value" id="diffPrice">Đang tính...</span> VND</p>
+  </div>
+
+  <script>
+    async function fetchPrices() {
+      try {
+        const VND_RATE = 24500; // giả định tỉ giá
+        const binanceRes = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=USDTBUSD");
+        const binanceData = await binanceRes.json();
+        const binancePrice = parseFloat(binanceData.price) * VND_RATE;
+
+        const okxPrice = (parseFloat(binanceData.price) - 0.01) * VND_RATE; // tạm giả lập
+
+        document.getElementById("binancePrice").innerText = binancePrice.toLocaleString();
+        document.getElementById("okxPrice").innerText = okxPrice.toLocaleString();
+        document.getElementById("diffPrice").innerText = Math.abs(binancePrice - okxPrice).toLocaleString();
+      } catch (e) {
+        document.getElementById("binancePrice").innerText = "Lỗi";
+        document.getElementById("okxPrice").innerText = "Lỗi";
+        document.getElementById("diffPrice").innerText = "Lỗi";
+        console.error(e);
+      }
+    }
+
+    fetchPrices();
+    setInterval(fetchPrices, 60000); // cập nhật mỗi phút
+  </script>
+</body>
+</html>
+Thêm index.html
